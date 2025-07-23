@@ -13,18 +13,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build JAR
+        run: ./gradlew clean build
+
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Copy JAR to server
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" scp build/libs/*.jar skfnx@rgpsh.iptime.org:/cygdrive/z/workspace/web-demo/build/libs/
 
       - name: Deploy Backend with Password
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -t -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
-            cd /d Z:\workspace\web-demo
-            git pull origin master
-
             cd /d Z:\workspace
             docker-compose up -d --build backend
           EOF
-
