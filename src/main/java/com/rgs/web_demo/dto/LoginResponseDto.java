@@ -2,7 +2,7 @@ package com.rgs.web_demo.dto;
 
 import lombok.Data;
 
-@Data
+@Data 
 public class LoginResponseDto {
     private String accessToken;
     private String refreshToken;
