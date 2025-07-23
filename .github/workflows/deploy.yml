@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - 'web-demo/**'
-      - 'docker-compose.yml'
 
 jobs:
   deploy_backend:
