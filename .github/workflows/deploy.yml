@@ -19,20 +19,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Grant execute permission to gradlew   # ← 이 부분!
+      - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
       - name: Build JAR
-        run: ./gradlew clean bootjar -x test
+        run: ./gradlew clean bootJar -x test
 
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - name: Copy JAR to server
-        env:
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-        run: |
-          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no build/libs/*.jar skfnx@rgpsh.iptime.org:/cygdrive/z/workspace/web-demo/build/libs/
 
       - name: Deploy Backend with Password
         env:
