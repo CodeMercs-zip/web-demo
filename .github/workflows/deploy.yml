@@ -5,9 +5,6 @@ on:
     branches:
       - main
       - master
-    paths:
-      - 'web-demo/**'
-      - 'docker-compose.yml'
 
 jobs:
   deploy_backend:
@@ -24,8 +21,9 @@ jobs:
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
+          sshpass -p "$SSH_PASSWORD" ssh -t -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
             cd Z:\workspace
             git pull origin main
             docker-compose up -d --build web-demo
           EOF
+
