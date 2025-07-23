@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build JAR
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean bootjar -x test
 
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
