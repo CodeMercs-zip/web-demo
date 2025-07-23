@@ -20,7 +20,7 @@ jobs:
           sshpass -p "$SSH_PASSWORD" ssh -t -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
             cd /d Z:\workspace\web-demo
             git pull origin master
-            ./gradlew clean bootJar -x test
+            gradlew clean bootJar -x test
 
             cd /d Z:\workspace
             docker-compose up -d --build backend
