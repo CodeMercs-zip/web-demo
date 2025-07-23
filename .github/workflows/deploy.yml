@@ -22,10 +22,10 @@ jobs:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -t -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
-            cd Z:\workspace\web-demo
+            cd /d Z:\workspace\web-demo
             git pull origin main
 
-            cd Z:\workspace
+            cd /d Z:\workspace
             docker-compose up -d --build web-demo
           EOF
 
