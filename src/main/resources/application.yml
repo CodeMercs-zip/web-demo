@@ -1,4 +1,4 @@
 jwt:
-  secret: "RGS"
+  secret: "MySuperSecretKeyForJwt123456789012"
   accessTokenExpirationMs: 900000
   refreshTokenExpirationMs: 604800000
