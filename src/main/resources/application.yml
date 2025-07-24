@@ -1,6 +1,4 @@
-spring.application.name=web-demo
-server.port=17070
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/test_db
-spring.datasource.username=postgres
-spring.datasource.password=5908
+jwt:
+  secret: "RGS"
+  accessTokenExpirationMs: 900000
+  refreshTokenExpirationMs: 604800000
