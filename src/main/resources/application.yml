@@ -1,4 +1,3 @@
-jwt:
-  secret: "MySuperSecretKeyForJwt123456789012"
-  accessTokenExpirationMs: 900000
-  refreshTokenExpirationMs: 604800000
+spring:
+  profiles:
+    active: dev

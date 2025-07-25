@@ -1,0 +1,7 @@
+allowed-origins:
+    - http://rgpsh.iptime.org:4030
+
+jwt:
+  secret: "MySuperSecretKeyForJwt123456789012"
+  accessTokenExpirationMs: 900000
+  refreshTokenExpirationMs: 604800000
