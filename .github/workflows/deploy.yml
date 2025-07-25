@@ -3,7 +3,6 @@ name: Deploy Spring Boot Backend
 on:
   push:
     branches:
-      - master
       - dev
 
 jobs:
@@ -20,7 +19,7 @@ jobs:
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -t -o StrictHostKeyChecking=no skfnx@rgpsh.iptime.org << 'EOF'
             cd /d Z:\workspace\web-demo
-            git pull origin master
+            git pull origin dev
             gradlew clean bootJar -x test
 
             cd /d Z:\workspace
