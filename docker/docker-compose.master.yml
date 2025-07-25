@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    postgres-master:
+        image: postgres:15-alpine
+        container_name: web-demo-postgres-master
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: ${MASTER_DB_NAME:-masterdb}  # masterdb로 변경
+            POSTGRES_USER: ${MASTER_DB_USER:-masteruser}
+            POSTGRES_PASSWORD: ${MASTER_DB_PASSWORD:-masterpass}
+            POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+        volumes:
+            - postgres_master_data:/var/lib/postgresql/data
+            - ./init-scripts:/docker-entrypoint-initdb.d:ro
+        networks:
+            - web-demo-master-network
+        restart: always
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${MASTER_DB_USER:-masteruser} -d ${MASTER_DB_NAME:-masterdb}"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+
+volumes:
+    postgres_master_data:
+
+networks:
+    web-demo-master-network:
+        driver: bridge

@@ -1,3 +1,41 @@
+jwt:
+  secret: "MySuperSecretKeyForJwt123456789012"
+  accessTokenExpirationMs: 900000
+  refreshTokenExpirationMs: 604800000
+
 spring:
   profiles:
     active: dev
+  application:
+    name: web-demo  # postgres-spring-template → web-demo로 변경 권장
+
+  # JPA 공통 설정
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Flyway 사용
+    show-sql: false  # 기본값 (dev에서 true로 덮어쓰기)
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Seoul
+    open-in-view: false
+
+  # Flyway 공통 설정
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    encoding: UTF-8
+    validate-on-migrate: true
+    baseline-on-migrate: true
+
+# 공통 로깅 설정
+logging:
+  level:
+    org.flywaydb: INFO
+    org.springframework.jdbc: DEBUG
+
+# 공통 서버 설정
+server:
+  port: 17070
