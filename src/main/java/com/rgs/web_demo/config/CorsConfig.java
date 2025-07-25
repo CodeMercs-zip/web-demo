@@ -14,7 +14,7 @@ public class CorsConfig {
 	@Bean
 	public CorsFilter corsFilter() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:4030"));
+		config.setAllowedOrigins(Arrays.asList("http://rgpsh.iptime.org:4030"));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(Arrays.asList("*"));
 		config.setAllowCredentials(true); // 쿠키 포함 허용
