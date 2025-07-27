@@ -18,7 +18,6 @@ END $$;
 CREATE TABLE member
 (
     id                  BIGSERIAL PRIMARY KEY,                                              -- 내부용 PK (시퀀스 기반)
-    member_uuid         VARCHAR(50)  NOT NULL UNIQUE,                                       -- 외부 참조용 UUID
     name                VARCHAR(100) NOT NULL,                                              -- 이름 (회사 또는 개인)
     phone_number        VARCHAR(30),                                                        -- 연락처
     email               VARCHAR(100),                                                       -- 이메일
@@ -29,7 +28,6 @@ CREATE TABLE member
 
 COMMENT ON TABLE member IS '회원 정보 마스터 테이블 (개인/법인 구분 포함)';
 COMMENT ON COLUMN member.id IS '시퀀스 기반 내부 식별자';
-COMMENT ON COLUMN member.member_uuid IS '외부 참조용 UUID';
 COMMENT ON COLUMN member.name IS '회원 이름 또는 회사명';
 COMMENT ON COLUMN member.phone_number IS '연락처';
 COMMENT ON COLUMN member.email IS '이메일 주소';
