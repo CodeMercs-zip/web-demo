@@ -22,6 +22,27 @@ INSERT INTO member (
     CURRENT_TIMESTAMP
 );
 
+INSERT INTO member (
+    name,
+    phone_number,
+    email,
+    password,
+    member_type,
+    is_deleted,
+    created_at,
+    updated_at
+) VALUES (
+    '그의부하scv',
+    '010-7788-7777',
+    'scv718@example.com',
+    '!677tkdgus',
+    'USER',
+    FALSE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+);
+
+
 -- 회사 회원 (COMPANY) 삽입
 INSERT INTO member (
     name,
