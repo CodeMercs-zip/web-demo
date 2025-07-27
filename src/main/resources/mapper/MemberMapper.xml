@@ -1,0 +1,36 @@
+<!-- resources/mapper/MemberMapper.xml -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rgs.web_demo.mapper.MemberMapper">
+
+  <!-- 회원 1명 조회 (이메일 기준) -->
+  <select id="selectMemberByEmail" parameterType="string" resultType="Member">
+    SELECT *
+    FROM member
+    WHERE email = #{email}
+  </select>
+  
+  <!-- 회원 등록 -->
+  <insert id="insertMember" parameterType="Member">
+    INSERT INTO member (
+      password,
+      member_uuid,
+      name,
+      phone_number,
+      email,
+      member_type,
+      created_at
+    ) VALUES (
+      #{password},
+      #{memberUuid},
+      #{name},
+      #{phoneNumber},
+      #{email},
+      #{memberType},
+      CURRENT_TIMESTAMP
+    )
+  </insert>
+</mapper>
