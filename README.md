@@ -1,74 +1,170 @@
-## 환경 설정
+# Web Demo
 
-Spring Boot: 17070 포트 
-Adminer: 8080 포트     ( http://localhost:8080/ )
-PostgreSQL: 5432 포트  
+Spring Boot 3.4.2 기반의 웹 애플리케이션입니다. JWT 인증, PostgreSQL 데이터베이스, 멀티 환경 지원을 제공합니다.
 
-### Windows 사용자
-- PowerShell: `powershell -ExecutionPolicy Bypass -File setup.ps1`
-- 배치파일: `setup.bat`
+## 🚀 빠른 시작
 
-### Mac/Linux 사용자 명령어
+### 요구사항
+- Java 21
+- Docker & Docker Compose
+- PowerShell 7.0+ (Windows) 또는 Bash (macOS/Linux)
+
+### 개발 환경 시작
+
+**Windows (PowerShell):**
+```powershell
+# Docker 환경만 시작
+.\scripts\dev-run.ps1
+
+# 완전 초기화 + DB 마이그레이션
+.\scripts\dev-start.ps1
+
+# 환경 종료
+.\scripts\dev-stop.ps1
+```
+
+**macOS/Linux (Bash):**
+```bash
+# 스크립트 실행 권한 설정 (최초 1회)
 chmod +x scripts/*.sh
-./scripts/setup.sh
 
-# 개발 환경 시작 (PostgreSQL + Adminer)
-./scripts/run-dev.sh
+# Docker 환경만 시작  
+./scripts/dev-run.sh
 
-# 환경 완전 종료 (컨테이너 삭제)
-./scripts/stop-dev.sh
+# 완전 초기화 + DB 마이그레이션
+./scripts/dev-start.sh
 
-# 환경 재시작
-./scripts/restart-dev.sh
+# 환경 종료
+./scripts/dev-stop.sh
+```
 
-
+### Spring Boot 애플리케이션 실행
+```bash
 # 개발 모드
 ./gradlew bootRun --args='--spring.profiles.active=dev'
 
-# 마스터 모드
-./gradlew bootRun --args='--spring.profiles.active=master'
+# 운영 모드 (별도 운영 DB 사용 - 현재 주석 처리됨)
+# ./gradlew bootRun --args='--spring.profiles.active=master'
+```
 
+## 📋 주요 기능
 
-# 마이그레이션 메뉴 (대화형)
-./scripts/flyway-setup.sh
+- **JWT 기반 인증**: Access Token (15분), Refresh Token (7일)
+- **회원 관리**: 개인/법인 회원 지원, 소프트 삭제
+- **멀티 환경**: dev 프로파일 (master는 별도 운영 DB용으로 주석 처리됨)
+- **데이터베이스**: PostgreSQL + Flyway 마이그레이션
+- **API 로깅**: AOP 기반 요청/응답 로깅
+- **보안**: Spring Security + CORS 설정
 
-# 직접 명령어
+## 🗄️ 데이터베이스 정보
+
+**개발 환경 (dev):**
+- DB: devdb / devuser / devpass
+- 포트: 5432
+- 특징: 컨테이너 재시작 시 데이터 초기화
+
+**운영 환경 (현재 주석 처리됨):**
+- 별도 운영 DB를 사용하므로 master 프로파일 설정이 주석 처리되어 있습니다
+
+**Adminer 웹 UI:**
+- URL: http://localhost:8080
+- 자동 로그인: http://localhost:8080/?pgsql=postgres-dev&username=devuser&password=devpass&db=devdb
+
+## 🛠️ Flyway 마이그레이션
+
+```bash
 ./gradlew flywayMigrate    # 마이그레이션 실행
-./gradlew flywayInfo       # 상태 확인
+./gradlew flywayInfo       # 상태 확인  
 ./gradlew flywayClean      # 데이터베이스 정리 (주의!)
 ./gradlew flywayValidate   # 마이그레이션 검증
+```
 
-backend/
+## 🌐 서비스 포트
+
+- **Spring Boot**: http://localhost:17070
+- **PostgreSQL**: localhost:5432
+- **Adminer**: http://localhost:8080
+- **Swagger UI**: http://localhost:17070/swagger-ui/index.html
+- **OpenAPI Docs**: http://localhost:17070/v3/api-docs
+
+## 📁 프로젝트 구조
+
+```
+web-demo/
 ├── docker/
-│   ├── docker-compose.dev.yml      # 개발 환경 (데이터 초기화)
-│   ├── docker-compose.master.yml   # 마스터 환경 (데이터 영속화)
-│   ├── init-scripts/               # 초기 DB 설정
-│   └── test-data/                  # 테스트 데이터
+│   └── docker-compose.dev.yml      # 개발 환경 설정
 ├── scripts/
-│   ├── setup.sh                    # 초기 설정
-│   ├── run-dev.sh                  # 개발 환경 시작
-│   ├── stop-dev.sh                 # 환경 종료
-│   ├── restart-dev.sh              # 환경 재시작
-│   └── flyway-setup.sh             # 마이그레이션 도우미
-├── src/main/resources/
-│   ├── application.yml             # 공통 설정
-│   ├── application-dev.yml         # 개발 환경 설정
-│   ├── application-master.yml      # 마스터 환경 설정
-│   └── db/migration/               # Flyway 마이그레이션 파일
-│       └── V1__init_member_schema.sql
-├── .env                         # 환경 변수
-└── build.gradle                 # 의존성 및 Flyway 설정
+│   ├── dev-run.ps1/.sh             # Docker 환경만 시작
+│   ├── dev-stop.ps1/.sh            # Docker 환경 종료  
+│   ├── dev-start.ps1/.sh           # 완전 초기화 + DB 마이그레이션
+│   └── setup-project.sh            # 프로젝트 초기 설정 (환경 파일, 권한 설정)
+├── src/main/
+│   ├── java/com/rgs/web_demo/
+│   │   ├── controller/              # REST 컨트롤러
+│   │   ├── service/                 # 비즈니스 로직
+│   │   ├── domain/                  # JPA 엔티티
+│   │   ├── dto/                     # 데이터 전송 객체
+│   │   ├── config/                  # 설정 클래스
+│   │   └── aop/                     # AOP 로깅
+│   └── resources/
+│       ├── application.yml          # 공통 설정
+│       ├── application-dev.yml      # 개발 환경 설정
+│       └── db/migration/            # Flyway 마이그레이션
+├── test-requests/
+│   └── member-create.http           # API 테스트 (curl 명령어)
+└── CLAUDE.md                        # 개발 가이드라인
+```
 
-🗄️ 데이터베이스 정보
+## 🧪 API 테스트
 
-개발 환경 (dev)
-DB명: devdb
-사용자: devuser
-비밀번호: devpass
-특징: 컨테이너 재시작 시 데이터 초기화
+`test-requests/member-create.http` 파일에 curl 명령어가 준비되어 있습니다:
 
-마스터 환경 (master)
-DB명: masterdb
-사용자: masteruser
-비밀번호: masterpass
-특징: 데이터 영속화 (Docker Volume 사용)
+```bash
+# 회원 등록
+curl -X POST http://localhost:17070/api/v1/member \
+  -H "Content-Type: application/json" \
+  -d '{"name":"김개발","email":"kim@example.com","password":"password123","memberType":"USER"}'
+
+# 회원 조회
+curl -X GET http://localhost:17070/api/v1/member/1
+
+# 회원 목록
+curl -X GET "http://localhost:17070/api/v1/member?page=0&size=10"
+```
+
+## 🔧 개발 도구
+
+- **Lombok**: 코드 간소화
+- **QueryDSL**: 타입 안전한 쿼리
+- **Swagger**: API 문서화 (개발 중)
+- **AOP**: 컨트롤러 로깅
+- **Flyway**: 데이터베이스 마이그레이션
+
+## 🔧 프로젝트 초기 설정
+
+**setup-project.sh**는 새로운 환경에서 프로젝트를 처음 설정할 때 사용하는 스크립트입니다:
+
+### 📋 수행하는 작업들:
+1. **환경 확인**: Docker 실행 상태, 시스템 아키텍처 체크
+2. **디렉토리 생성**: 필요한 프로젝트 디렉토리 구조 생성
+3. **환경 파일 생성**: `.env` 파일 자동 생성 (개발 환경 설정만, 운영 DB는 TODO로 주석 처리)
+4. **권한 설정**: Gradle Wrapper와 스크립트 파일들 실행 권한 부여
+5. **의존성 확인**: Flyway 등 필수 의존성 설정 여부 확인
+
+### 🎯 사용 시점:
+- 프로젝트를 새로운 환경에 클론했을 때
+- `.env` 파일이 없거나 권한 문제가 있을 때  
+- 프로젝트 구조를 재설정해야 할 때
+
+```bash
+# 사용법 (macOS/Linux)
+./scripts/setup-project.sh
+```
+
+## 📝 참고사항
+
+- JWT secret과 DB 자격증명은 환경별로 다르게 설정됩니다
+- 모든 타임스탬프는 Asia/Seoul 타임존을 사용합니다  
+- Member 테이블은 개인(USER)과 법인(COMPANY) 모두 지원합니다
+- 소프트 삭제를 지원하여 데이터 복구가 가능합니다
+- Swagger UI를 통해 API 문서화 및 테스트가 가능합니다

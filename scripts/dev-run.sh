@@ -1,8 +1,7 @@
 #!/bin/bash
+# 개발 환경 통합 실행 스크립트 (Bash 버전)
 
-# 개발 환경 통합 실행 스크립트 (개선된 버전)
-
-set -e
+set -e  # 오류 발생 시 중단
 
 echo "🚀 web-demo 통합 개발 환경 시작..."
 
@@ -51,17 +50,6 @@ if [ $timeout -le 0 ]; then
 fi
 
 echo ""
-echo "📊 접속 정보:"
-echo "   🗄️  PostgreSQL: localhost:5432"
-echo "   🌐 Adminer: http://localhost:8080"
-echo "   🔗 자동 로그인: http://localhost:8080/?pgsql=postgres-dev&username=devuser&password=devpass&db=devdb"
-echo "   📋 DB 정보: devdb / devuser / devpass"
-echo ""
-echo "💡 위의 '자동 로그인' URL을 브라우저 북마크로 저장하세요!"
-
-# Spring Boot 실행
-echo "🌱 Spring Boot 애플리케이션 시작 중..."
-echo "   🌐 웹 애플리케이션: http://localhost:17070"
-echo ""
-
-./gradlew bootRun --args='--spring.profiles.active=dev'
+echo "✅ Docker 환경 준비 완료!"
+echo "🌐 Adminer: http://localhost:8080/?pgsql=postgres-dev&username=devuser&password=devpass&db=devdb"
+echo "💡 이제 IDE에서 Spring Boot 실행하세요!"

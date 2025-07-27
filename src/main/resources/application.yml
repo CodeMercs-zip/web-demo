@@ -11,7 +11,6 @@ spring:
 
   # JPA 공통 설정
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate  # Flyway 사용
     show-sql: false  # 기본값 (dev에서 true로 덮어쓰기)
@@ -20,6 +19,7 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Seoul
+    # OSIV False로 변경
     open-in-view: false
 
   # Flyway 공통 설정
@@ -28,7 +28,7 @@ spring:
     locations: classpath:db/migration
     encoding: UTF-8
     validate-on-migrate: true
-    baseline-on-migrate: true
+    baseline-on-migrate: false
 
 # 공통 로깅 설정
 logging:
@@ -39,3 +39,10 @@ logging:
 # 공통 서버 설정
 server:
   port: 17070
+
+# 운영 환경 설정 (주석 처리 - 별도 운영 DB 사용)
+# master:
+#   database:
+#     url: jdbc:postgresql://localhost:5432/masterdb
+#     username: masteruser
+#     password: masterpass
