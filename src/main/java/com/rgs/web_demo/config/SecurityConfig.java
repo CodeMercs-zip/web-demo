@@ -1,9 +1,5 @@
 package com.rgs.web_demo.config;
 
-import com.rgs.web_demo.filter.JwtAuthenticationFilter;
-import com.rgs.web_demo.handler.OAuth2AuthenticationSuccessHandler;
-import com.rgs.web_demo.service.CustomOAuth2UserService;
-import com.rgs.web_demo.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +9,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.rgs.web_demo.filter.JwtAuthenticationFilter;
+import com.rgs.web_demo.handler.OAuth2AuthenticationSuccessHandler;
+import com.rgs.web_demo.service.CustomOAuth2UserService;
+import com.rgs.web_demo.util.JwtUtil;
 
 @Configuration
 public class SecurityConfig {
