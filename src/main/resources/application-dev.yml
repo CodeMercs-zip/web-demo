@@ -3,7 +3,9 @@ spring:
     url: jdbc:postgresql://db:5432/web_demo_db
     username: postgres
     password: 5908
-
+  mybatis:
+    mapper-locations: classpath:/mapper/**/*.xml
+    type-aliases-package: com.rgs.web_demo.vo
   jpa:
     show-sql: true
     properties:
