@@ -4,11 +4,12 @@ import lombok.Data;
 
 @Data
 public class MemberVo {
-	String name;
-	String password;
-	String phoneNumber;
-	String email;
-	String memberType;
-	String createdAt;
-	String updatedAt;
+    String name;
+    String password;
+    String phoneNumber;
+    String email;
+    String memberType;
+    String createdAt;
+    String updatedAt;
+    String memberUuid;
 }

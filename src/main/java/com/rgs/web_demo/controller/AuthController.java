@@ -1,6 +1,5 @@
 package com.rgs.web_demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,12 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rgs.web_demo.dto.LoginRequestDto;
 import com.rgs.web_demo.dto.LoginResponseDto;
 import com.rgs.web_demo.dto.LogoutRequestDto;
+import com.rgs.web_demo.mapper.MemberMapper;
 import com.rgs.web_demo.service.RefreshTokenService;
 import com.rgs.web_demo.service.TokenBlacklistService;
 import com.rgs.web_demo.service.UserService;
 import com.rgs.web_demo.util.JwtUtil;
+import com.rgs.web_demo.vo.MemberVo;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -23,19 +27,16 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final TokenBlacklistService tokenBlacklistService ;
     private final JwtUtil jwtUtil;
+    private final MemberMapper memberMapper;
 
-    @Autowired
-    public AuthController(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, TokenBlacklistService tokenBlacklistService) {
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
-        this.refreshTokenService = refreshTokenService;
-        this.tokenBlacklistService = tokenBlacklistService;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
-        if (!userService.authenticate(request.getUsername(), request.getPassword())) {
-            return ResponseEntity.status(401).build();
+        MemberVo member = memberMapper.selectMemberByEmail(request.getUsername());
+
+        // 회원이 없거나, 비밀번호 불일치
+        if (member == null || !member.getPassword().equals(request.getPassword())) {
+            return ResponseEntity.status(401).body("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
         String accessToken = jwtUtil.generateAccessToken(request.getUsername());
