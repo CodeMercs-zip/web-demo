@@ -1,11 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/web_demo_db
-    username: postgres
-    password: 5908
-  mybatis:
-    mapper-locations: classpath:/mapper/**/*.xml
-    type-aliases-package: com.rgs.web_demo.vo
+    url: jdbc:postgresql://localhost:5432/devdb
+    username: devuser
+    password: devpass
+
   jpa:
     show-sql: true
     properties:
