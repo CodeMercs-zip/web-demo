@@ -29,10 +29,6 @@ CREATE TABLE member
     updated_at          TIMESTAMP                                                           -- 수정일시
 );
 
--- 인덱스 추가 (성능 최적화)
-CREATE INDEX idx_member_is_deleted ON member(is_deleted);
-CREATE INDEX idx_member_deleted_at ON member(deleted_at);
-
 COMMENT ON TABLE member IS '회원 정보 마스터 테이블';
 COMMENT ON COLUMN member.id IS '시퀀스 기반 내부 식별자';
 COMMENT ON COLUMN member.name IS '회원 이름 또는 회사명';
