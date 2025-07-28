@@ -8,6 +8,11 @@ buildscript {
     }
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += "-parameters"
+}
+
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
