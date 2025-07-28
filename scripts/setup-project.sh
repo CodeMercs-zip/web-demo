@@ -1,15 +1,13 @@
 #!/bin/bash
+# 개발 환경 완전 시작 스크립트 (Bash 버전)
 
-# 프로젝트 Docker 환경 초기 설정 스크립트
-# web-demo 프로젝트용
+set -e  # 오류 발생 시 중단
 
-set -e
+echo "🚀 개발 환경 완전 시작..."
 
-echo "🚀 web-demo PostgreSQL Docker 환경 설정 시작..."
-
-# 현재 디렉토리가 프로젝트 루트인지 확인
-if [ ! -f "build.gradle" ]; then
-    echo "❌ 프로젝트 루트 디렉토리에서 실행해주세요."
+# 프로젝트 루트 확인
+if [[ ! -f "build.gradle" ]]; then
+    echo "❌ 프로젝트 루트에서 실행해주세요."
     exit 1
 fi
 
@@ -42,10 +40,10 @@ DB_NAME=web_demo_dev
 DB_USER=devuser
 DB_PASSWORD=devpass
 
-# 마스터 환경 설정
-MASTER_DB_NAME=web_demo_master
-MASTER_DB_USER=masteruser
-MASTER_DB_PASSWORD=masterpass
+# TODO: 운영 DB 연동 시 아래 마스터 환경 설정 주석 해제
+# MASTER_DB_NAME=web_demo_master
+# MASTER_DB_USER=masteruser
+# MASTER_DB_PASSWORD=masterpass
 
 # Spring 프로파일
 SPRING_PROFILES_ACTIVE=dev
