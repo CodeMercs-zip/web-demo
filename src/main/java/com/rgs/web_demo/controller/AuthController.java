@@ -1,12 +1,5 @@
 package com.rgs.web_demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rgs.web_demo.dto.LoginRequestDto;
 import com.rgs.web_demo.dto.LoginResponseDto;
 import com.rgs.web_demo.dto.LogoutRequestDto;
@@ -14,6 +7,12 @@ import com.rgs.web_demo.service.RefreshTokenService;
 import com.rgs.web_demo.service.TokenBlacklistService;
 import com.rgs.web_demo.service.UserService;
 import com.rgs.web_demo.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,7 +20,7 @@ public class AuthController {
 
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
-    private final TokenBlacklistService tokenBlacklistService ;
+    private final TokenBlacklistService tokenBlacklistService;
     private final JwtUtil jwtUtil;
 
     @Autowired
@@ -47,7 +46,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody LogoutRequestDto request) {
         String refreshToken = request.getRefreshToken();
-        String username = jwtUtil.getUsernameFromToken(refreshToken);
+        String username = jwtUtil.getUserIdFromToken(refreshToken);
 
         // 리프레시 토큰 만료시간(Unix timestamp ms)
         long expiration = jwtUtil.getExpirationFromToken(refreshToken); // 만료시간 추출 메서드 필요
