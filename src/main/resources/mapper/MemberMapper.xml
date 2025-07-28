@@ -1,4 +1,3 @@
-<!-- resources/mapper/MemberMapper.xml -->
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
@@ -12,7 +11,7 @@
     FROM member
     WHERE email = #{email}
   </select>
-  
+
   <!-- 회원 등록 -->
   <insert id="insertMember" parameterType="Member">
     INSERT INTO member (
