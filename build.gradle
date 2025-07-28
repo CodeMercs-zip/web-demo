@@ -53,6 +53,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -69,6 +70,9 @@ dependencies {
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // OAuth2 Client
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // Flyway
     implementation 'org.flywaydb:flyway-core'
@@ -96,7 +100,7 @@ flyway {
     locations = ['classpath:db/migration']
     encoding = 'UTF-8'
     cleanDisabled = (project.findProperty("flywayCleanDisabled") ?: "false").toBoolean()
-    
+
     // 운영 환경은 별도 DB 사용으로 여기서는 dev 환경만 설정
     // master 환경 설정은 별도 운영 서버에서 관리
 }

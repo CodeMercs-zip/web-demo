@@ -7,10 +7,10 @@ spring:
   profiles:
     active: dev
   application:
-    name: web-demo  # postgres-spring-template → web-demo로 변경 권장
+    name: web-demo
   mybatis:
-      mapper-locations: classpath:/mapper/**/*.xml
-      type-aliases-package: com.rgs.demo.domain
+    mapper-locations: classpath:/mapper/**/*.xml
+    type-aliases-package: com.rgs.demo.domain
   # JPA 공통 설정
   jpa:
     hibernate:

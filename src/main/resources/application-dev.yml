@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/web_demo_db
-    username: postgres
-    password: 5908
+    url: jdbc:postgresql://localhost:5432/devdb
+    username: devuser
+    password: devpass
 
   jpa:
     show-sql: true

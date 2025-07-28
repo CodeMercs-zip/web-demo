@@ -33,7 +33,7 @@ public class Member {
     @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +54,12 @@ public class Member {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Column(name = "provider_id", length = 100)
+    private String providerId;
+
+    @Column(name = "provider", length = 20)
+    private String provider;
 
     @PrePersist
     public void prePersist() {
@@ -98,5 +104,12 @@ public class Member {
     // 삭제 여부 확인 메서드
     public boolean isDeleted() {
         return this.isDeleted != null && this.isDeleted;
+    }
+
+    // 소셜 로그인 계정 연결 메서드
+    public void linkSocialAccount(String providerId, String provider) {
+        this.providerId = providerId;
+        this.provider = provider;
+        this.updatedAt = LocalDateTime.now();
     }
 }

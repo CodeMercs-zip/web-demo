@@ -20,23 +20,27 @@ CREATE TABLE member
     id                  BIGSERIAL PRIMARY KEY,                                              -- 내부용 PK (시퀀스 기반)
     name                VARCHAR(100) NOT NULL,                                              -- 이름 (회사 또는 개인)
     phone_number        VARCHAR(30),                                                        -- 연락처
-    email               VARCHAR(100),                                                       -- 이메일
-    password            VARCHAR(255) NOT NULL,                                              -- 비밀번호
     member_type         member_type NOT NULL,                                               -- 회원 유형 (USER / COMPANY)
-    is_deleted          BOOLEAN NOT NULL DEFAULT FALSE,                                     -- 탈퇴 여부 (TRUE: 탈퇴, FALSE: 정상)
-    deleted_at          TIMESTAMP NULL,                                                     -- 탈퇴 일시 (NULL: 정상 회원)
+    email               VARCHAR(100),                                                       -- 이메일
+    password            VARCHAR(255),                                                       -- 비밀번호 (OAuth 사용자는 NULL 가능)
+    provider_id         VARCHAR(100),                                                       -- 소셜 로그인 ID (provider_id 형태)
+    provider            VARCHAR(20),                                                        -- OAuth 제공자 (google, kakao, naver)
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                                -- 등록일시
-    updated_at          TIMESTAMP                                                           -- 수정일시
+    updated_at          TIMESTAMP,                                                          -- 수정일시
+    is_deleted          BOOLEAN NOT NULL DEFAULT FALSE,                                     -- 탈퇴 여부 (TRUE: 탈퇴, FALSE: 정상)
+    deleted_at          TIMESTAMP NULL                                                      -- 탈퇴 일시 (NULL: 정상 회원)
 );
 
 COMMENT ON TABLE member IS '회원 정보 마스터 테이블';
 COMMENT ON COLUMN member.id IS '시퀀스 기반 내부 식별자';
 COMMENT ON COLUMN member.name IS '회원 이름 또는 회사명';
 COMMENT ON COLUMN member.phone_number IS '연락처';
-COMMENT ON COLUMN member.email IS '이메일 주소';
-COMMENT ON COLUMN member.password IS '비밀번호';
 COMMENT ON COLUMN member.member_type IS '회원 유형(USER 또는 COMPANY)';
-COMMENT ON COLUMN member.is_deleted IS '탈퇴 여부 (TRUE: 탈퇴, FALSE: 정상)';
-COMMENT ON COLUMN member.deleted_at IS '탈퇴 일시 (NULL: 정상 회원)';
+COMMENT ON COLUMN member.email IS '이메일 주소';
+COMMENT ON COLUMN member.password IS '비밀번호 (OAuth 사용자는 NULL 가능)';
+COMMENT ON COLUMN member.provider_id IS '소셜 로그인 고유 ID';
+COMMENT ON COLUMN member.provider IS 'OAuth 제공자 (google, kakao, naver)';
 COMMENT ON COLUMN member.created_at IS '생성 시각';
 COMMENT ON COLUMN member.updated_at IS '최종 수정 시각';
+COMMENT ON COLUMN member.is_deleted IS '탈퇴 여부 (TRUE: 탈퇴, FALSE: 정상)';
+COMMENT ON COLUMN member.deleted_at IS '탈퇴 일시 (NULL: 정상 회원)';
