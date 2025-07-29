@@ -2,6 +2,7 @@ package com.rgs.web_demo.service;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,22 @@ public class AuthService {
     private final TokenBlacklistService tokenBlacklistService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    
+    @Value("${spring.data.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.data.redis.port}")
+    private int redisPort;
 
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(MemberCreateRequestDto requestDto) {
         if (memberMapper.selectMemberByEmail(requestDto.getEmail()) != null) {
             return ResponseEntity.status(400)
                     .body(ApiResponseDto.error("이미 가입된 이메일입니다."));
         }
-
+        
+        System.out.println("🧩 Redis Host: " + redisHost);
+        System.out.println("🧩 Redis Port: " + redisPort);
+        
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
         newMember.setEmail(requestDto.getEmail());
