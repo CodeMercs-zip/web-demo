@@ -31,20 +31,11 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.data.redis.port}")
-    private int redisPort;
-
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(MemberCreateRequestDto requestDto) {
         if (memberMapper.selectMemberByEmail(requestDto.getEmail()) != null) {
             return ResponseEntity.status(400)
                     .body(ApiResponseDto.error("이미 가입된 이메일입니다."));
         }
-        
-        log.debug(redisHost);
-        log.debug(""+redisPort);
         
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
