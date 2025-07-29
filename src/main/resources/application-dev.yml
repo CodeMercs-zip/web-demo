@@ -48,10 +48,10 @@ spring:
     username: postgres
     password: 5908
 
-  redis:
-    host: redis
-    port: 6379
-    timeout: 60000
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
   jpa:
     show-sql: true
