@@ -51,7 +51,7 @@ public class MemberResponseDto {
                 .updatedAt(member.getUpdatedAt())
                 .build();
     }
-
+    
     public static MemberResponseDto from(MemberVo vo) {
         return MemberResponseDto.builder()
                 .name(vo.getName())
