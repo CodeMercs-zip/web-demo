@@ -1,67 +1,40 @@
 package com.rgs.web_demo.controller;
 
-import com.rgs.web_demo.dto.LoginRequestDto;
-import com.rgs.web_demo.dto.LoginResponseDto;
-import com.rgs.web_demo.dto.LogoutRequestDto;
-import com.rgs.web_demo.service.RefreshTokenService;
-import com.rgs.web_demo.service.TokenBlacklistService;
-import com.rgs.web_demo.service.UserService;
-import com.rgs.web_demo.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rgs.web_demo.dto.LoginRequestDto;
+import com.rgs.web_demo.dto.LoginResponseDto;
+import com.rgs.web_demo.dto.LogoutRequestDto;
+import com.rgs.web_demo.dto.request.MemberCreateRequestDto;
+import com.rgs.web_demo.dto.response.ApiResponseDto;
+import com.rgs.web_demo.dto.response.MemberResponseDto;
+import com.rgs.web_demo.service.AuthService;
+
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
-    private final RefreshTokenService refreshTokenService;
-    private final TokenBlacklistService tokenBlacklistService;
-    private final JwtUtil jwtUtil;
-
-    @Autowired
-    public AuthController(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, TokenBlacklistService tokenBlacklistService) {
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
-        this.refreshTokenService = refreshTokenService;
-        this.tokenBlacklistService = tokenBlacklistService;
-    }
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
-        if (!userService.authenticate(request.getUsername(), request.getPassword())) {
-            return ResponseEntity.status(401).build();
-        }
-
-        String accessToken = jwtUtil.generateAccessToken(request.getUsername());
-        String refreshToken = jwtUtil.generateRefreshToken(request.getUsername());
-
-        return ResponseEntity.ok(new LoginResponseDto(accessToken, refreshToken));
+    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto request) {
+        return authService.login(request);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody LogoutRequestDto request) {
-        String refreshToken = request.getRefreshToken();
-        String username = jwtUtil.getUserIdFromToken(refreshToken);
-
-        // 리프레시 토큰 만료시간(Unix timestamp ms)
-        long expiration = jwtUtil.getExpirationFromToken(refreshToken); // 만료시간 추출 메서드 필요
-
-        long now = System.currentTimeMillis();
-        long expirationMs = expiration - now;
-        if (expirationMs < 0) expirationMs = 0; // 이미 만료된 경우 방어
-
-        // 블랙리스트 추가 (만료시간 포함)
-        tokenBlacklistService.blacklistToken(refreshToken, expirationMs);
-
-        // 리프레시 토큰 DB/Redis에서 삭제
-        refreshTokenService.deleteRefreshToken(username);
-
-        return ResponseEntity.ok("로그아웃 완료");
+    public ResponseEntity<ApiResponseDto<Void>> logout(@RequestBody LogoutRequestDto request) {
+        return authService.logout(request);
     }
 
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(@RequestBody MemberCreateRequestDto request) {
+        return authService.signup(request);
+    }
 }

@@ -1,14 +1,16 @@
 package com.rgs.web_demo.dto.response;
 
+import java.time.LocalDateTime;
+
 import com.rgs.web_demo.domain.Member;
 import com.rgs.web_demo.enumeration.MemberType;
+import com.rgs.web_demo.vo.MemberVo;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -49,4 +51,14 @@ public class MemberResponseDto {
                 .updatedAt(member.getUpdatedAt())
                 .build();
     }
+
+    public static MemberResponseDto from(MemberVo vo) {
+        return MemberResponseDto.builder()
+                .name(vo.getName())
+                .email(vo.getEmail())
+                .phoneNumber(vo.getPhoneNumber())
+                .memberType(vo.getMemberType())
+                .build();
+    }
+
 }
