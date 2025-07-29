@@ -18,7 +18,9 @@ import com.rgs.web_demo.util.JwtUtil;
 import com.rgs.web_demo.vo.MemberVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -41,8 +43,8 @@ public class AuthService {
                     .body(ApiResponseDto.error("이미 가입된 이메일입니다."));
         }
         
-        System.out.println("🧩 Redis Host: " + redisHost);
-        System.out.println("🧩 Redis Port: " + redisPort);
+        log.debug(redisHost);
+        log.debug(""+redisPort);
         
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
