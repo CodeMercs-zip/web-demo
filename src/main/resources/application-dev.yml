@@ -49,7 +49,7 @@ spring:
     password: 5908
 
   redis:
-    host: rgpsh.iptime.org
+    host: redis
     port: 6379
     timeout: 60000
 
