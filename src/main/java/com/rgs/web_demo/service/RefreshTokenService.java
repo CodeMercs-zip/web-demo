@@ -28,4 +28,8 @@ public class RefreshTokenService {
     public void deleteRefreshToken(String username) {
         redisTemplate.delete("refresh:" + username);
     }
+    
+    public boolean exists(String email) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(email));
+    }
 }

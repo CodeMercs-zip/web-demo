@@ -2,10 +2,10 @@ package com.rgs.web_demo.service;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.rgs.web_demo.dto.LoginRequestDto;
 import com.rgs.web_demo.dto.LoginResponseDto;
@@ -17,6 +17,7 @@ import com.rgs.web_demo.mapper.MemberMapper;
 import com.rgs.web_demo.util.JwtUtil;
 import com.rgs.web_demo.vo.MemberVo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,23 +66,45 @@ public class AuthService {
             return ResponseEntity.status(401).body(ApiResponseDto.error("이메일 또는 비밀번호가 올바르지 않습니다."));
         }
 
-        String accessToken = jwtUtil.generateAccessToken(request.getEmail());
-        String refreshToken = jwtUtil.generateRefreshToken(request.getEmail());
+        String email = request.getEmail();
+
+        // ✅ 기존 refreshToken 있으면 삭제 (강제 로그아웃)
+        if (refreshTokenService.exists(email)) {
+            log.info("기존 로그인 기록이 있어 이전 refreshToken 삭제: {}", email);
+            refreshTokenService.deleteRefreshToken(email);
+        }
+
+        // ✅ 새로운 토큰 발급 및 저장
+        String accessToken = jwtUtil.generateAccessToken(email);
+        String refreshToken = jwtUtil.generateRefreshToken(email);
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
-        refreshTokenService.saveRefreshToken(request.getEmail(), refreshToken, expirationMs);
+        refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
 
         return ResponseEntity.ok(ApiResponseDto.success("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
     }
 
-    public ResponseEntity<ApiResponseDto<Void>> logout(LogoutRequestDto request) {
-        String refreshToken = request.getRefreshToken();
-        String username = jwtUtil.getUserIdFromToken(refreshToken);
-        long expirationMs = Math.max(0, jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis());
 
-        tokenBlacklistService.blacklistToken(refreshToken, expirationMs);
-        refreshTokenService.deleteRefreshToken(username);
+    public ResponseEntity<ApiResponseDto<Void>> logout(HttpServletRequest request, @RequestBody LogoutRequestDto logoutRequestDto) {
+        String accessToken = jwtUtil.resolveToken(request); // Authorization 헤더에서 꺼내기
+        String refreshToken = logoutRequestDto.getRefreshToken();
+
+        // AccessToken 블랙리스트 처리
+        if (accessToken != null && jwtUtil.validateToken(accessToken)) {
+            long accessExp = jwtUtil.getExpirationFromToken(accessToken) - System.currentTimeMillis();
+            tokenBlacklistService.blacklistToken(accessToken, accessExp);
+        }
+
+        // RefreshToken 블랙리스트 처리 및 삭제
+        if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
+            String email = jwtUtil.getUserIdFromToken(refreshToken);
+            long refreshExp = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
+
+            tokenBlacklistService.blacklistToken(refreshToken, refreshExp);
+            refreshTokenService.deleteRefreshToken(email);
+        }
 
         return ResponseEntity.ok(ApiResponseDto.success("로그아웃 완료", null));
     }
+
 }

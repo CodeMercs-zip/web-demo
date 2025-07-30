@@ -44,7 +44,7 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:postgresql://rgpsh.iptime.org:5432/web_demo_db
+    url: jdbc:postgresql://rgpsh.iptime.org:55432/web_demo_db
     username: postgres
     password: 5908
 
