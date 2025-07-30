@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.flywaydb:flyway-gradle-plugin:10.20.1"
+        classpath "org.flywaydb:flyway-database-postgresql:10.20.1"
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
@@ -7,16 +17,13 @@ plugins {
 
 group = 'com.rgs'
 version = '0.0.2'
+
 jar.enabled = false
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += "-parameters"
 }
 
 configurations {
@@ -32,28 +39,40 @@ repositories {
 }
 
 dependencies {
-    // MyBatis
-    implementation 'org.mybatis:mybatis:3.5.15'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
-    // Spring
+    implementation 'org.mybatis:mybatis:3.5.15'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // Redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // DB
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    // postgres
     runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.testcontainers:postgresql'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // OAuth2 Client
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // Flyway
     implementation 'org.flywaydb:flyway-core'
@@ -62,43 +81,34 @@ dependencies {
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     implementation 'com.querydsl:querydsl-sql:5.0.0'
-    implementation 'com.querydsl:querydsl-core:5.0.0'
-    implementation 'com.querydsl:querydsl-collections:5.0.0'
+    implementation "com.querydsl:querydsl-core:5.0.0"
+    implementation "com.querydsl:querydsl-collections:"
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
     // Swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
-    // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
-
-    // DevTools (개발 중 자동 재시작)
-    // developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.testcontainers:postgresql'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Configuration Processor
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
+
 flyway {
-    url = project.findProperty("flywayUrl") ?: "jdbc:postgresql://localhost:5432/devdb"
-    user = project.findProperty("flywayUser") ?: "devuser"
-    password = project.findProperty("flywayPassword") ?: "devpass"
+    url = project.findProperty("flywayUrl") ?: "jdbc:postgresql://localhost:5432/devdb"  // dev 환경 기본값
+    user = project.findProperty("flywayUser") ?: "devuser"  // dev 환경 기본값
+    password = project.findProperty("flywayPassword") ?: "devpass"  // dev 환경 기본값
     schemas = (project.findProperty("flywaySchemas") ?: "public").split(",")
     locations = ['classpath:db/migration']
     encoding = 'UTF-8'
     cleanDisabled = (project.findProperty("flywayCleanDisabled") ?: "false").toBoolean()
+
+    // 운영 환경은 별도 DB 사용으로 여기서는 dev 환경만 설정
+    // master 환경 설정은 별도 운영 서버에서 관리
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 
 def querydslDir = layout.buildDirectory.dir('generated/querydsl').get().asFile
 

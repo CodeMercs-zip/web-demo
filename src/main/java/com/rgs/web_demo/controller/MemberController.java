@@ -1,8 +1,8 @@
 package com.rgs.web_demo.controller;
 
-import com.rgs.web_demo.dto.request.MemberCreateRequestDto;
-import com.rgs.web_demo.dto.request.MemberUpdateRequestDto;
+import com.rgs.web_demo.dto.request.*;
 import com.rgs.web_demo.dto.response.ApiResponseDto;
+import com.rgs.web_demo.dto.response.AuthResponseDto;
 import com.rgs.web_demo.dto.response.MemberResponseDto;
 import com.rgs.web_demo.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +20,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
 @Tag(name = "Member", description = "회원 관리 API")
-public class MemberController {
+public class MemberController extends BaseController {
 
     private final MemberService memberService;
 
-    @PostMapping
-    @Operation(summary = "회원 생성", description = "새로운 회원을 생성합니다.")
-    public ResponseEntity<ApiResponseDto<MemberResponseDto>> createMember(
+    @PostMapping("/signup")
+    @Operation(summary = "일반 회원가입", description = "이메일/패스워드로 회원가입하고 JWT 토큰을 발급받습니다.")
+    public ResponseEntity<ApiResponseDto<AuthResponseDto>> signup(
             @Valid @RequestBody MemberCreateRequestDto requestDto) {
-        try {
-            MemberResponseDto member = memberService.createMember(requestDto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponseDto.success("회원이 생성되었습니다.", member));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponseDto.error(e.getMessage()));
-        }
+        AuthResponseDto authResponse = memberService.signup(requestDto);
+        return ok(authResponse);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "일반 로그인", description = "이메일/패스워드로 로그인하고 JWT 토큰을 발급받습니다.")
+    public ResponseEntity<ApiResponseDto<AuthResponseDto>> login(
+            @Valid @RequestBody LoginRequestDto requestDto) {
+        AuthResponseDto authResponse = memberService.login(requestDto);
+        return ok(authResponse);
     }
 
     @GetMapping("/{id}")
@@ -44,13 +45,8 @@ public class MemberController {
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> getMember(
             @Parameter(description = "회원 ID", required = true)
             @PathVariable Long id) {
-        try {
-            MemberResponseDto member = memberService.getMember(id);
-            return ResponseEntity.ok(ApiResponseDto.success(member));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponseDto.error(e.getMessage()));
-        }
+        MemberResponseDto member = memberService.getMember(id);
+        return ok(member);
     }
 
     @GetMapping
@@ -58,13 +54,8 @@ public class MemberController {
     public ResponseEntity<ApiResponseDto<Page<MemberResponseDto>>> getMembers(
             @Parameter(description = "페이징 정보")
             @PageableDefault(size = 20) Pageable pageable) {
-        try {
-            Page<MemberResponseDto> members = memberService.getMembers(pageable);
-            return ResponseEntity.ok(ApiResponseDto.success(members));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponseDto.error(e.getMessage()));
-        }
+        Page<MemberResponseDto> members = memberService.getMembers(pageable);
+        return ok(members);
     }
 
     @PutMapping("/{id}")
@@ -73,13 +64,8 @@ public class MemberController {
             @Parameter(description = "회원 ID", required = true)
             @PathVariable Long id,
             @Valid @RequestBody MemberUpdateRequestDto requestDto) {
-        try {
-            MemberResponseDto member = memberService.updateMember(id, requestDto);
-            return ResponseEntity.ok(ApiResponseDto.success("회원 정보가 수정되었습니다.", member));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponseDto.error(e.getMessage()));
-        }
+        MemberResponseDto member = memberService.updateMember(id, requestDto);
+        return ok(member);
     }
 
     @DeleteMapping("/{id}")
@@ -87,12 +73,23 @@ public class MemberController {
     public ResponseEntity<ApiResponseDto<Void>> deleteMember(
             @Parameter(description = "회원 ID", required = true)
             @PathVariable Long id) {
-        try {
-            memberService.deleteMember(id);
-            return ResponseEntity.ok(ApiResponseDto.success("회원이 삭제되었습니다.", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponseDto.error(e.getMessage()));
-        }
+        memberService.deleteMember(id);
+        return ok(null);
+    }
+
+    @PostMapping("/social/login")
+    @Operation(summary = "소셜 로그인", description = "소셜 Provider Access Token으로 로그인합니다.")
+    public ResponseEntity<ApiResponseDto<AuthResponseDto>> socialLogin(
+            @Valid @RequestBody SocialLoginRequestDto requestDto) {
+        AuthResponseDto authResponse = memberService.socialLogin(requestDto);
+        return ok(authResponse);
+    }
+
+    @PostMapping("/social/signup")
+    @Operation(summary = "소셜 회원가입", description = "소셜 Provider Access Token으로 회원가입합니다.")
+    public ResponseEntity<ApiResponseDto<AuthResponseDto>> socialSignup(
+            @Valid @RequestBody SocialSignupRequestDto requestDto) {
+        AuthResponseDto authResponse = memberService.socialSignup(requestDto);
+        return ok(authResponse);
     }
 }
