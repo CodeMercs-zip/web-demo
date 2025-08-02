@@ -3,3 +3,18 @@ spring:
     import:
       - "optional:file:./config-private/backend/common.properties"
       - "optional:file:./config-private/backend/dev.properties"
+  data:
+    redis:
+      host: redis
+      port: 6379
+# 로깅 레벨 설정
+logging:
+  level:
+    org.springframework.jdbc: INFO
+    com.rgs.web_demo: INFO
+
+app:
+  cors:
+    allowed-origins:
+      - "http://rgpsh.iptime.org:3000"
+      - "http://rgpsh.iptime.org:4030"

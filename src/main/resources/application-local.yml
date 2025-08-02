@@ -4,12 +4,16 @@ spring:
       - "optional:file:./config-private/backend/common.properties"
       - "optional:file:./config-private/backend/local.properties"
 
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+  # JPA 설정
+  jpa:
+    show-sql: true  # SQL 로그 출력
 
-# 로깅 설정 ( local : DEBUG 레벨까지 로그 확인 ) TODO: logback 설정 완료될 경우 제거
+  # Flyway 설정
+  flyway:
+    baseline-on-migrate: false  # 처음부터 마이그레이션
+    clean-disabled: false       # clean 허용
+
+# 디버그 로깅
 logging:
   level:
     org.hibernate.SQL: DEBUG
