@@ -1,0 +1,16 @@
+spring:
+  config:
+    import:
+      - "optional:file:./config-private/backend/common.properties"
+      - "optional:file:./config-private/backend/local.properties"
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+# 로깅 설정 ( local : DEBUG 레벨까지 로그 확인 ) TODO: logback 설정 완료될 경우 제거
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    com.rgs.web_demo: DEBUG
