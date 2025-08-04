@@ -32,9 +32,9 @@ mkdir -p scripts
 mkdir -p src/main/resources/db/migration
 
 # 환경 파일 생성
-if [ ! -f .env ]; then
+if [ ! -f yml.env ]; then
     echo "📝 환경 파일 생성 중..."
-    cat > .env << 'EOF'
+    cat > yml.env << 'EOF'
 # 개발 환경 설정
 DB_NAME=web_demo_dev
 DB_USER=devuser

@@ -1,7 +1,10 @@
+# CORS 설정
 allowed-origins:
-    - http://rgpsh.iptime.org:4030
+  - http://rgpsh.iptime.org:4030
 
-jwt:
-  secret: "MySuperSecretKeyForJwt123456789012"
-  accessTokenExpirationMs: 900000
-  refreshTokenExpirationMs: 604800000
+# 로깅 레벨 설정
+logging:
+  level:
+    org.flywaydb: WARN
+    org.springframework.jdbc: WARN
+    com.rgs.web_demo: INFO
