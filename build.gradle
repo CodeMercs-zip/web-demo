@@ -118,22 +118,30 @@ tasks.named('test') {
 }
 
 
+
+// QueryDSL Q클래스가 생성될 디렉토리 경로 설정
 def querydslDir = layout.buildDirectory.dir('generated/querydsl').get().asFile
 
+// 모든 Java 컴파일 작업에 대해 생성된 소스 파일 출력 디렉토리 지정
 tasks.withType(JavaCompile) {
+    // 어노테이션 프로세서에 의해 생성되는 소스 파일들이 저장될 위치 설정
     options.generatedSourceOutputDirectory = file(querydslDir)
 }
 
+// 소스 세트 설정: 메인 소스에 QueryDSL 생성 디렉토리 포함
 sourceSets {
     main {
         java {
+            // 컴파일 시 QueryDSL이 생성한 Q클래스들도 소스로 인식하도록 추가
             srcDirs += [querydslDir]
         }
     }
 }
 
+// clean 작업 시 QueryDSL 생성 파일들도 함께 삭제하도록 설정
 tasks.named('clean') {
     doLast {
+        // 빌드 정리 시 QueryDSL로 생성된 Q클래스 디렉토리 삭제
         querydslDir.deleteDir()
     }
 }
