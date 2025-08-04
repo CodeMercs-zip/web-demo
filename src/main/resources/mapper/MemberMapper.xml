@@ -4,7 +4,7 @@
 <mapper namespace="com.rgs.web_demo.mapper.MemberMapper">
 
 	<!-- 회원 1명 조회 (이메일 기준) -->
-	<select id="selectMemberByEmail"
+	<select id="selectMemberByEmail" parameterType="string"
 		resultType="com.rgs.web_demo.vo.MemberVo">
 		SELECT *
 		FROM member
