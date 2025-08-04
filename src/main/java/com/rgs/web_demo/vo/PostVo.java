@@ -1,4 +1,4 @@
-package com.rgs.web_demo.dto;
+package com.rgs.web_demo.vo;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDto {
+public class PostVo {
     private Long id;
     private String title;
     private String content;

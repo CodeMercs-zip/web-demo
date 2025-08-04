@@ -22,7 +22,7 @@ public class MyBatisConfig {
 		sessionFactoryBean.setDataSource(dataSource);
 		sessionFactoryBean.setMapperLocations(
 				new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/**/*.xml"));
-		sessionFactoryBean.setTypeAliasesPackage("com.rgs.web_demo.domain");
+		sessionFactoryBean.setTypeAliasesPackage("com.rgs.web_demo.vo");
 
 		return sessionFactoryBean.getObject();
 	}

@@ -5,12 +5,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
-import com.rgs.web_demo.dto.PostDto;
+import com.rgs.web_demo.vo.PostVo;
 
 @Mapper
 public interface PostMapper {
 
-    List<PostDto> selectPostList(@Param("keyword") String keyword,
+    List<PostVo> selectPostList(@Param("keyword") String keyword,
                                  @Param("offset") int offset,
                                  @Param("size") int size);
 
