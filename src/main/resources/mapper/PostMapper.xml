@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.rgs.web_dem.mapper.PostMapper">
+<mapper namespace="com.rgs.web_demo.mapper.PostMapper">
 
   <select id="selectPostList" resultType="com.rgs.web_demo.dto.PostDto">
     SELECT id, title, content, created_at
