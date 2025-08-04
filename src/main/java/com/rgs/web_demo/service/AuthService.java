@@ -31,13 +31,13 @@ public class AuthService {
     private final TokenBlacklistService tokenBlacklistService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    
+
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(MemberCreateRequestDto requestDto) {
         if (memberMapper.selectMemberByEmail(requestDto.getEmail()) != null) {
             return ResponseEntity.status(400)
-                    .body(ApiResponseDto.error("이미 가입된 이메일입니다."));
+                    .body(ApiResponseDto.of("이미 가입된 이메일입니다."));
         }
-        
+
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
         newMember.setEmail(requestDto.getEmail());
@@ -49,11 +49,11 @@ public class AuthService {
         int result = memberMapper.insertMember(newMember);
         if (result == 0) {
             return ResponseEntity.status(500)
-                    .body(ApiResponseDto.error("회원가입에 실패했습니다."));
+                    .body(ApiResponseDto.of("회원가입에 실패했습니다."));
         }
 
         return ResponseEntity.status(201)
-                .body(ApiResponseDto.success("회원가입이 완료되었습니다.", MemberResponseDto.from(newMember)));
+                .body(ApiResponseDto.of("회원가입이 완료되었습니다.", MemberResponseDto.from(newMember)));
     }
 
     public boolean authenticate(String email, String password) {
@@ -63,39 +63,36 @@ public class AuthService {
 
     public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(LoginRequestDto request) {
         if (!authenticate(request.getEmail(), request.getPassword())) {
-            return ResponseEntity.status(401).body(ApiResponseDto.error("이메일 또는 비밀번호가 올바르지 않습니다."));
+            return ResponseEntity.status(401)
+                    .body(ApiResponseDto.of("이메일 또는 비밀번호가 올바르지 않습니다."));
         }
 
         String email = request.getEmail();
 
-        // ✅ 기존 refreshToken 있으면 삭제 (강제 로그아웃)
+        // 기존 refreshToken 삭제
         if (refreshTokenService.exists(email)) {
             log.info("기존 로그인 기록이 있어 이전 refreshToken 삭제: {}", email);
             refreshTokenService.deleteRefreshToken(email);
         }
 
-        // ✅ 새로운 토큰 발급 및 저장
         String accessToken = jwtUtil.generateAccessToken(email);
         String refreshToken = jwtUtil.generateRefreshToken(email);
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
         refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
 
-        return ResponseEntity.ok(ApiResponseDto.success("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
+        return ResponseEntity.ok(ApiResponseDto.of("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
     }
 
-
     public ResponseEntity<ApiResponseDto<Void>> logout(HttpServletRequest request, @RequestBody LogoutRequestDto logoutRequestDto) {
-        String accessToken = jwtUtil.resolveToken(request); // Authorization 헤더에서 꺼내기
+        String accessToken = jwtUtil.resolveToken(request);
         String refreshToken = logoutRequestDto.getRefreshToken();
 
-        // AccessToken 블랙리스트 처리
         if (accessToken != null && jwtUtil.validateToken(accessToken)) {
             long accessExp = jwtUtil.getExpirationFromToken(accessToken) - System.currentTimeMillis();
             tokenBlacklistService.blacklistToken(accessToken, accessExp);
         }
 
-        // RefreshToken 블랙리스트 처리 및 삭제
         if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
             String email = jwtUtil.getUserIdFromToken(refreshToken);
             long refreshExp = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
@@ -104,7 +101,6 @@ public class AuthService {
             refreshTokenService.deleteRefreshToken(email);
         }
 
-        return ResponseEntity.ok(ApiResponseDto.success("로그아웃 완료", null));
+        return ResponseEntity.ok(ApiResponseDto.of("로그아웃 완료"));
     }
-
 }
