@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.rgs.web_demo.dto.request.PostCreateRequest;
 import com.rgs.web_demo.dto.response.PageResponse;
 import com.rgs.web_demo.mapper.PostMapper;
 import com.rgs.web_demo.vo.PostVo;
@@ -31,4 +32,22 @@ public class PostService {
             .pageNumber(page)
             .build();
     }
+
+    public void createPost(PostCreateRequest request) {
+        postMapper.insertPost(request);
+    }
+
+    public void deletePost(Long postId) {
+        postMapper.deletePostById(postId);
+    }
+
+    public PostVo getPostById(Long postId) {
+        PostVo post = postMapper.findById(postId);
+        if (post == null) {
+            throw new RuntimeException("해당 게시글을 찾을 수 없습니다.");
+        }
+        return post;
+    }
+
+
 }

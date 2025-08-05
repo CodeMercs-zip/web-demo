@@ -18,3 +18,9 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     com.rgs.web_demo: DEBUG
+
+app:
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+      - "http://localhost:4030"
