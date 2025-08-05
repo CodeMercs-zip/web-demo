@@ -76,16 +76,6 @@ public class AuthService {
 
         log.info("PasswordEncoder 구현체: {}", passwordEncoder.getClass().getName());
 
-        // 기존 refreshToken 삭제 시도
-        try {
-            if (refreshTokenService.exists(email)) {
-                log.info("기존 refreshToken 삭제: {}", email);
-                refreshTokenService.deleteRefreshToken(email);
-            }
-        } catch (Exception e) {
-            log.warn("기존 refreshToken 삭제 실패 (무시됨): {}", e.getMessage(), e);
-        }
-
         // 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(email);
         String refreshToken = jwtUtil.generateRefreshToken(email);
