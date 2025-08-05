@@ -63,37 +63,41 @@ public class AuthService {
             return false;
         }
 
-        boolean matches = passwordEncoder.matches(password, member.getPassword());
-        return matches;
+        return passwordEncoder.matches(password, member.getPassword());
     }
 
     public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(LoginRequestDto request) {
-        if (!authenticate(request.getEmail(), request.getPassword())) {
+        String email = request.getEmail();
+
+        if (!authenticate(email, request.getPassword())) {
             return ResponseEntity.status(401)
                     .body(ApiResponseDto.of("이메일 또는 비밀번호가 올바르지 않습니다."));
         }
 
-        String email = request.getEmail();
         log.info("PasswordEncoder 구현체: {}", passwordEncoder.getClass().getName());
 
+        // 기존 refreshToken 삭제 시도
         try {
-            // 기존 refreshToken 삭제
             if (refreshTokenService.exists(email)) {
                 log.info("기존 refreshToken 삭제: {}", email);
                 refreshTokenService.deleteRefreshToken(email);
             }
         } catch (Exception e) {
-            log.warn("Redis에서 기존 refreshToken 조회 또는 삭제 실패: {}", e.getMessage(), e);
+            log.warn("기존 refreshToken 삭제 실패 (무시됨): {}", e.getMessage(), e);
         }
 
+        // 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(email);
         String refreshToken = jwtUtil.generateRefreshToken(email);
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
+        // Redis 저장 실패 시 로그인 실패로 처리
         try {
             refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
         } catch (Exception e) {
             log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage(), e);
+            return ResponseEntity.status(500)
+                    .body(ApiResponseDto.of("로그인 중 오류가 발생했습니다. 관리자에게 문의하세요."));
         }
 
         return ResponseEntity.ok(ApiResponseDto.of("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
@@ -103,11 +107,13 @@ public class AuthService {
         String accessToken = jwtUtil.resolveToken(request);
         String refreshToken = logoutRequestDto.getRefreshToken();
 
+        // accessToken 블랙리스트 처리
         if (accessToken != null && jwtUtil.validateToken(accessToken)) {
             long accessExp = jwtUtil.getExpirationFromToken(accessToken) - System.currentTimeMillis();
             tokenBlacklistService.blacklistToken(accessToken, accessExp);
         }
 
+        // refreshToken 삭제 및 블랙리스트 처리
         if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
             String email = jwtUtil.getUserIdFromToken(refreshToken);
             long refreshExp = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
