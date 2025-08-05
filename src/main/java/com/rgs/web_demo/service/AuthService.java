@@ -33,16 +33,25 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(MemberCreateRequestDto requestDto) {
-        if (memberMapper.selectMemberByEmail(requestDto.getEmail()) != null) {
+        String rawPhone = requestDto.getPhoneNumber();
+
+        // 숫자만 남기기
+        String digits = rawPhone.replaceAll("[^\\d]", "");
+
+        // 형식 맞는지 확인 및 변환
+        if (!digits.matches("^\\d{11}$")) {
             return ResponseEntity.status(400)
-                    .body(ApiResponseDto.of("이미 가입된 이메일입니다."));
+                    .body(ApiResponseDto.of("전화번호는 숫자 11자리여야 합니다. 예: 01012345678"));
         }
+
+        // "01012345678" → "010-1234-5678"
+        String formattedPhone = digits.replaceFirst("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
 
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
         newMember.setEmail(requestDto.getEmail());
         newMember.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        newMember.setPhoneNumber(requestDto.getPhoneNumber());
+        newMember.setPhoneNumber(formattedPhone); // 포맷 적용된 번호
         newMember.setMemberType(requestDto.getMemberType());
         newMember.setMemberUuid(UUID.randomUUID().toString());
 
