@@ -74,18 +74,27 @@ public class AuthService {
         }
 
         String email = request.getEmail();
+        log.info("PasswordEncoder 구현체: {}", passwordEncoder.getClass().getName());
 
-        // 기존 refreshToken 삭제
-        if (refreshTokenService.exists(email)) {
-            log.info("기존 로그인 기록이 있어 이전 refreshToken 삭제: {}", email);
-            refreshTokenService.deleteRefreshToken(email);
+        try {
+            // 기존 refreshToken 삭제
+            if (refreshTokenService.exists(email)) {
+                log.info("기존 refreshToken 삭제: {}", email);
+                refreshTokenService.deleteRefreshToken(email);
+            }
+        } catch (Exception e) {
+            log.warn("Redis에서 기존 refreshToken 조회 또는 삭제 실패: {}", e.getMessage(), e);
         }
 
         String accessToken = jwtUtil.generateAccessToken(email);
         String refreshToken = jwtUtil.generateRefreshToken(email);
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
-        refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
+        try {
+            refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
+        } catch (Exception e) {
+            log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage(), e);
+        }
 
         return ResponseEntity.ok(ApiResponseDto.of("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
     }

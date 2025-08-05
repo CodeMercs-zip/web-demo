@@ -15,11 +15,8 @@ public class PostCreateRequest {
     @Schema(description = "게시글 본문", example = "현재 게시판 API와 DB를 설계 중입니다.")
     private String content;
 
-    @Schema(description = "작성자 ID", example = "1")
-    private Long authorId;
-
-    @Schema(description = "작성자 이름", example = "변태라곰")
-    private String authorName;
+    @Schema(description = "작성자 이메일", example = "beargom@example.com")
+    private String authorEmail;
 
     @Schema(description = "게시글 타입", example = "QNA / FAQ / GENERAL")
     private String postType;

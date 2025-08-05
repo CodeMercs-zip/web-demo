@@ -11,6 +11,6 @@ public class PostVo {
     private String postType;
     private Boolean isSecret;
     private Long viewCount;
-    private LocalDateTime createdAt; // 타입 개선
-    private String authorName;
+    private LocalDateTime createdAt;
+    private String authorEmail;
 }
