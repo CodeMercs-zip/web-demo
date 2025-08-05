@@ -3,7 +3,7 @@
 
 <mapper namespace="com.rgs.web_demo.mapper.PostMapper">
 
-  <select id="selectPostList" resultType="com.rgs.web_demo.vo.PostDto">
+  <select id="selectPostList" resultType="com.rgs.web_demo.vo.PostVo">
     SELECT id, title, content, created_at
     FROM post
     <where>
