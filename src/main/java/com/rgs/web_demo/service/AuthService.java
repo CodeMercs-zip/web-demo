@@ -58,7 +58,13 @@ public class AuthService {
 
     public boolean authenticate(String email, String password) {
         MemberVo member = memberMapper.selectMemberByEmail(email);
-        return member != null && passwordEncoder.matches(password, member.getPassword());
+        if (member == null) {
+            log.warn("로그인 실패 - 존재하지 않는 이메일: {}", email);
+            return false;
+        }
+
+        boolean matches = passwordEncoder.matches(password, member.getPassword());
+        return matches;
     }
 
     public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(LoginRequestDto request) {
