@@ -14,6 +14,7 @@ import com.rgs.web_demo.dto.request.MemberCreateRequestDto;
 import com.rgs.web_demo.dto.response.ApiResponseDto;
 import com.rgs.web_demo.dto.response.MemberResponseDto;
 import com.rgs.web_demo.mapper.MemberMapper;
+import com.rgs.web_demo.util.FormatUtil;
 import com.rgs.web_demo.util.JwtUtil;
 import com.rgs.web_demo.vo.MemberVo;
 
@@ -35,17 +36,7 @@ public class AuthService {
     public ResponseEntity<ApiResponseDto<MemberResponseDto>> signup(MemberCreateRequestDto requestDto) {
         String rawPhone = requestDto.getPhoneNumber();
 
-        // 숫자만 남기기
-        String digits = rawPhone.replaceAll("[^\\d]", "");
-
-        // 형식 맞는지 확인 및 변환
-        if (!digits.matches("^\\d{11}$")) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponseDto.of("전화번호는 숫자 11자리여야 합니다. 예: 01012345678"));
-        }
-
-        // "01012345678" → "010-1234-5678"
-        String formattedPhone = digits.replaceFirst("^(\\d{3})(\\d{4})(\\d{4})$", "$1-$2-$3");
+        String formattedPhone = FormatUtil.numberFormat(rawPhone.replaceAll("[^\\d]", ""));
 
         MemberVo newMember = new MemberVo();
         newMember.setName(requestDto.getName());
