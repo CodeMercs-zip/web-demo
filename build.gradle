@@ -41,7 +41,7 @@ repositories {
 dependencies {
 
     implementation 'org.mybatis:mybatis:3.5.15'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -98,7 +98,7 @@ flyway {
     url = project.findProperty("flywayUrl") ?: "jdbc:postgresql://localhost:5432/localdb"  // local 환경 Docker DB
     user = project.findProperty("flywayUser") ?: "localuser"  // local 환경 기본 사용자
     password = project.findProperty("flywayPassword") ?: "localpass"  // local 환경 기본 비밀번호
-    
+
     // 스키마 및 마이그레이션 파일 위치 설정
     schemas = (project.findProperty("flywaySchemas") ?: "public").split(",")
     locations = ['classpath:db/migration']  // 마이그레이션 SQL 파일 위치
