@@ -18,3 +18,9 @@ app:
     allowed-origins:
       - "http://rgpsh.iptime.org:3000"
       - "http://rgpsh.iptime.org:4030"
+      - "http://localhost:3000"
+      - "http://localhost:4030"
+jwt:
+  secret: ${JWT_SECRET}
+  accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXPIRATION}
