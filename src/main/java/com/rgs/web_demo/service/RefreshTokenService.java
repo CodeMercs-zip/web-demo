@@ -30,6 +30,6 @@ public class RefreshTokenService {
     }
     
     public boolean exists(String email) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(email));
+        return Boolean.TRUE.equals(redisTemplate.hasKey("refresh:" + email));
     }
 }
