@@ -5,6 +5,7 @@ import com.rgs.web_demo.dto.oauth.OAuth2UserInfo;
 import com.rgs.web_demo.dto.request.*;
 import com.rgs.web_demo.dto.response.AuthResponseDto;
 import com.rgs.web_demo.dto.response.MemberResponseDto;
+import com.rgs.web_demo.enumeration.MemberType;
 import com.rgs.web_demo.exception.BusinessException;
 import com.rgs.web_demo.exception.MemberErrorCodes;
 import com.rgs.web_demo.repository.MemberRepository;
@@ -113,56 +114,44 @@ public class MemberService {
     }
 
     /**
-     * 소셜 로그인
+     * 소셜 로그인/회원가입 통합
+     * DB에 사용자 정보가 있으면 로그인, 없으면 자동 회원가입 처리
      */
-    public AuthResponseDto socialLogin(SocialLoginRequestDto requestDto) {
+    @Transactional
+    public AuthResponseDto socialAuth(SocialLoginRequestDto requestDto) {
         // Access Token으로 소셜 Provider 사용자 정보 조회
         OAuth2UserInfo userInfo = socialAuthService.getUserInfo(requestDto.getAccessToken(), requestDto.getProvider());
         // Provider와 소셜 ID를 조합한 고유 식별자 생성
         String providerId = requestDto.getProvider() + "_" + userInfo.getId();
 
         // 기존 가입된 소셜 회원 조회
-        Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new BusinessException(MemberErrorCodes.NOT_FOUND_SOCIAL_MEMBER));
-
-        return generateAuthResponse(member);
+        return memberRepository.findByProviderId(providerId)
+                .map(this::generateAuthResponse) // 기존 회원이면 바로 로그인 처리
+                .orElseGet(() -> createSocialMember(userInfo, requestDto.getProvider(), providerId)); // 신규 회원이면 자동 회원가입
     }
 
     /**
-     * 소셜 회원가입
+     * 소셜 회원 자동 생성
      */
-    @Transactional
-    public AuthResponseDto socialSignup(SocialSignupRequestDto requestDto) {
-        // Access Token으로 소셜 Provider 사용자 정보 조회
-        OAuth2UserInfo userInfo = socialAuthService.getUserInfo(requestDto.getAccessToken(), requestDto.getProvider());
-        // Provider와 소셜 ID를 조합한 고유 식별자 생성
-        String providerId = requestDto.getProvider() + "_" + userInfo.getId();
+    private AuthResponseDto createSocialMember(OAuth2UserInfo userInfo, String provider, String providerId) {
+        // 이메일 중복 검증 (일반 회원가입으로 이미 가입된 경우)
+        if (memberRepository.findByEmail(userInfo.getEmail()).isPresent()) {
+            throw new BusinessException(MemberErrorCodes.ALREADY_EXISTS_EMAIL);
+        }
 
-        // 중복 가입 검증 (같은 providerId 또는 이메일로 이미 가입된 경우)
-        validateSocialSignup(providerId, userInfo.getEmail());
-
-        // 소셜 로그인 사용자 정보로 새 회원 생성
+        // 소셜 정보로 새 회원 자동 생성
         Member newMember = Member.builder()
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
-                .phoneNumber(requestDto.getPhoneNumber())
+                .phoneNumber(null) // 소셜에서 전화번호 정보가 없을 수 있음
                 .password("SOCIAL_USER") // 소셜 로그인 사용자는 패스워드 불필요
-                .memberType(requestDto.getMemberType())
+                .memberType(MemberType.USER) // 기본값으로 USER 타입 설정
                 .providerId(providerId)
-                .provider(requestDto.getProvider())
+                .provider(provider)
                 .build();
 
         Member savedMember = memberRepository.save(newMember);
         return generateAuthResponse(savedMember);
-    }
-
-    private void validateSocialSignup(String providerId, String email) {
-        if (memberRepository.findByProviderId(providerId).isPresent()) {
-            throw new BusinessException(MemberErrorCodes.ALREADY_EXISTS_SOCIAL_MEMBER);
-        }
-        if (memberRepository.findByEmail(email).isPresent()) {
-            throw new BusinessException(MemberErrorCodes.ALREADY_EXISTS_EMAIL);
-        }
     }
 
     private AuthResponseDto generateAuthResponse(Member member) {

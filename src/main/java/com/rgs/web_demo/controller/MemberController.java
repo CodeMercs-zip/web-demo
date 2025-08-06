@@ -77,19 +77,12 @@ public class MemberController extends BaseController {
         return ok(null);
     }
 
-    @PostMapping("/social/login")
-    @Operation(summary = "소셜 로그인", description = "소셜 Provider Access Token으로 로그인합니다.")
-    public ResponseEntity<ApiResponseDto<AuthResponseDto>> socialLogin(
+    @PostMapping("/social/auth")
+    @Operation(summary = "소셜 로그인/회원가입 통합", 
+              description = "소셜 Provider Access Token으로 로그인 시도. 기존 회원이면 로그인, 신규 회원이면 자동 회원가입 후 로그인합니다.")
+    public ResponseEntity<ApiResponseDto<AuthResponseDto>> socialAuth(
             @Valid @RequestBody SocialLoginRequestDto requestDto) {
-        AuthResponseDto authResponse = memberService.socialLogin(requestDto);
-        return ok(authResponse);
-    }
-
-    @PostMapping("/social/signup")
-    @Operation(summary = "소셜 회원가입", description = "소셜 Provider Access Token으로 회원가입합니다.")
-    public ResponseEntity<ApiResponseDto<AuthResponseDto>> socialSignup(
-            @Valid @RequestBody SocialSignupRequestDto requestDto) {
-        AuthResponseDto authResponse = memberService.socialSignup(requestDto);
+        AuthResponseDto authResponse = memberService.socialAuth(requestDto);
         return ok(authResponse);
     }
 }
