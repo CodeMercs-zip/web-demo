@@ -1,26 +1,23 @@
 package com.rgs.web_demo.mapper;
 
-import java.util.List;
+import org.springframework.stereotype.Component;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import com.rgs.web_demo.dto.request.PostCreateRequest;
+import com.rgs.web_demo.domain.Post;
 import com.rgs.web_demo.vo.PostVo;
 
-@Mapper
-public interface PostMapper {
+@Component
+public class PostMapper {
 
-    List<PostVo> selectPostList(@Param("keyword") String keyword,
-                                 @Param("offset") int offset,
-                                 @Param("size") int size);
-
-    long countPostList(@Param("keyword") String keyword);
-
-    void insertPost(PostCreateRequest request);
-
-    void deletePostById(@Param("postId") Long postId);
-
-    PostVo findById(Long postId);
-
+    public PostVo toVo(Post post) {
+        return PostVo.builder()
+            .id(post.getId())
+            .title(post.getTitle())
+            .content(post.getContent())
+            .postType(post.getPostType())
+            .isSecret(post.isSecret())
+            .viewCount(post.getViewCount())
+            .createdAt(post.getCreatedAt())
+            .authorEmail(post.getAuthorEmail())
+            .build();
+    }
 }

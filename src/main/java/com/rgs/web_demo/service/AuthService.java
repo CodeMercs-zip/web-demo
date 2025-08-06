@@ -82,13 +82,13 @@ public class AuthService {
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
         // Redis 저장 실패 시 로그인 실패로 처리
-        try {
-            refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
-        } catch (Exception e) {
-            log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage(), e);
-            return ResponseEntity.status(500)
-                    .body(ApiResponseDto.of("로그인 중 오류가 발생했습니다. 관리자에게 문의하세요."));
-        }
+//        try {
+//            refreshTokenService.saveRefreshToken(email, refreshToken, expirationMs);
+//        } catch (Exception e) {
+//            log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage(), e);
+//            return ResponseEntity.status(500)
+//                    .body(ApiResponseDto.of("로그인 중 오류가 발생했습니다. 관리자에게 문의하세요."));
+//        }
 
         return ResponseEntity.ok(ApiResponseDto.of("로그인 성공", new LoginResponseDto(accessToken, refreshToken)));
     }

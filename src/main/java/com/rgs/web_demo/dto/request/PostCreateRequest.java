@@ -1,5 +1,7 @@
 package com.rgs.web_demo.dto.request;
 
+import com.rgs.web_demo.domain.Post;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +25,16 @@ public class PostCreateRequest {
 
     @Schema(description = "비밀글 여부", example = "false")
     private Boolean isSecret;
+
+    public Post toEntity() {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .authorEmail(authorEmail)
+                .postType(postType)
+                .isSecret(isSecret)
+                .viewCount(0)
+                .build();
+    }
+
 }

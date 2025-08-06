@@ -1,16 +1,18 @@
 package com.rgs.web_demo.vo;
 
-import lombok.Data;
 import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class PostVo {
     private Long id;
     private String title;
     private String content;
     private String postType;
-    private Boolean isSecret;
-    private Long viewCount;
+    private boolean isSecret;
+    private int viewCount;
     private LocalDateTime createdAt;
     private String authorEmail;
 }
