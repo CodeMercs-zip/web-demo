@@ -16,6 +16,7 @@ public class RefreshTokenService {
     // 리프레시 토큰 저장 (username 기준, 만료시간 설정)
     public void saveRefreshToken(String username, String refreshToken, long expirationMs) {
         redisTemplate.opsForValue().set("refresh:" + username, refreshToken, Duration.ofMillis(expirationMs));
+
     }
 
     // 리프레시 토큰 검증 (username, token 일치 확인)
@@ -30,6 +31,6 @@ public class RefreshTokenService {
     }
     
     public boolean exists(String email) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(email));
+        return Boolean.TRUE.equals(redisTemplate.hasKey("refresh:" + email));
     }
 }

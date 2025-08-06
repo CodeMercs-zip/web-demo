@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <property name="LOG_PATTERN" value="[%d{HH:mm:ss.SSS}] %-5level [%thread] %logger{36} - %msg%n"/>
+
+    <!-- JUL(Java Util Logging) -> SLF4J로 레벨 동기화 -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <!-- 상태 메시지 출력 끔 -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <!-- 콘솔 로그 출력 설정 -->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Spring 관련 로그는 WARN 이상만 출력 -->
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
+    <!-- 너의 프로젝트 패키지 로그 DEBUG 이상 출력 -->
+    <logger name="com.rgs.web_demo" level="DEBUG" additivity="false">
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
+    <!-- 루트 로거 (기본 출력 레벨) -->
+    <root level="INFO">
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</configuration>

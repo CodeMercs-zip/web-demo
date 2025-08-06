@@ -2,24 +2,29 @@ spring:
   config:
     import:
       - "optional:file:./config-private/backend/common.properties"
-      - "optional:file:./config-private/backend/dev.properties"
-  data:
-    redis:
-      host: redis
-      port: 6379
-# 로깅 레벨 설정
+      - "optional:file:./config-private/backend/local.properties"
+
+  # JPA 설정
+  jpa:
+    show-sql: true  # SQL 로그 출력
+
+  # Flyway 설정
+  flyway:
+    baseline-on-migrate: false  # 처음부터 마이그레이션
+    clean-disabled: false       # clean 허용
+
+# 디버그 로깅
 logging:
   level:
-    org.springframework.jdbc: INFO
-    com.rgs.web_demo: INFO
+    org.hibernate.SQL: DEBUG
+    com.rgs.web_demo: DEBUG
 
 app:
   cors:
     allowed-origins:
-      - "http://rgpsh.iptime.org:3000"
-      - "http://rgpsh.iptime.org:4030"
       - "http://localhost:3000"
       - "http://localhost:4030"
+
 jwt:
   secret: ${JWT_SECRET}
   accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXPIRATION}

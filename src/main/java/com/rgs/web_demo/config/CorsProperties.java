@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "cors")
+@ConfigurationProperties(prefix = "app.cors")
 public class CorsProperties {
 	private List<String> allowedOrigins;
 }
