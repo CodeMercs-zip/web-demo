@@ -60,4 +60,15 @@ public class Post {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void  updatePost(String title, String content, String authorEmail, String postType, Boolean isSecret) {
+        if (title != null) this.title = title;
+        if (content != null) this.content = content;
+        if (authorEmail != null) this.authorEmail = authorEmail;
+        if (postType != null) this.postType = postType;
+        if (isSecret != null) this.isSecret = isSecret;
+
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }
