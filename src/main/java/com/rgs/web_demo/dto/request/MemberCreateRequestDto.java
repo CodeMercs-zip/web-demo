@@ -1,5 +1,6 @@
 package com.rgs.web_demo.dto.request;
 
+import com.rgs.web_demo.domain.Member;
 import com.rgs.web_demo.enumeration.MemberType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -33,4 +34,17 @@ public class MemberCreateRequestDto {
     @NotNull(message = "회원 유형은 필수입니다")
     @Schema(description = "회원 유형", example = "USER")
     private MemberType memberType;
+
+    /**
+     * 비밀번호 암호화 및 전화번호 포맷 완료 후 엔티티 변환
+     */
+    public Member toEntity(String encodedPassword, String formattedPhone) {
+        return Member.builder()
+                .name(this.name)
+                .phoneNumber(formattedPhone)
+                .email(this.email)
+                .password(encodedPassword)
+                .memberType(this.memberType)
+                .build();
+    }
 }
