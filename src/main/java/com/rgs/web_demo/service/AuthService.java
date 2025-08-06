@@ -1,5 +1,11 @@
 package com.rgs.web_demo.service;
 
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.rgs.web_demo.domain.Member;
 import com.rgs.web_demo.dto.LoginRequestDto;
 import com.rgs.web_demo.dto.LoginResponseDto;
@@ -10,14 +16,10 @@ import com.rgs.web_demo.dto.response.MemberResponseDto;
 import com.rgs.web_demo.repository.MemberNormalRepository;
 import com.rgs.web_demo.util.FormatUtil;
 import com.rgs.web_demo.util.JwtUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -66,13 +68,13 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
         long expirationMs = jwtUtil.getExpirationFromToken(refreshToken) - System.currentTimeMillis();
 
-//         try {
-//             refreshTokenService.saveRefreshToken(member.getEmail(), refreshToken, expirationMs);
-//         } catch (Exception e) {
-//             log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage());
-//             return ResponseEntity.status(500)
-//                     .body(ApiResponseDto.of("로그인 중 오류가 발생했습니다."));
-//         }
+         try {
+             refreshTokenService.saveRefreshToken(member.getEmail(), refreshToken, expirationMs);
+         } catch (Exception e) {
+             log.error("Redis에 refreshToken 저장 실패: {}", e.getMessage());
+             return ResponseEntity.status(500)
+                     .body(ApiResponseDto.of("로그인 중 오류가 발생했습니다."));
+         }
 
         return ResponseEntity.ok(
                 ApiResponseDto.of("로그인 성공", new LoginResponseDto(accessToken, refreshToken))
