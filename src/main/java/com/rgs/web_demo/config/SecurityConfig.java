@@ -50,6 +50,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/v1/member/**").permitAll()
                     .requestMatchers("/api/posts").permitAll()
                     .requestMatchers("/api/posts/**").permitAll()
+                    .requestMatchers("/api/inquiries/**").permitAll() // 문의 API 인증 없이 접근 허용
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                     .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

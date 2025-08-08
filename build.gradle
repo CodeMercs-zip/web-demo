@@ -88,6 +88,9 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
+    // Slack API Client
+    implementation 'com.slack.api:slack-api-client:1.30.0'
+
 }
 
 
